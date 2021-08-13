@@ -114,6 +114,7 @@ ${obj["1"].contents}
 ## SnapLogic Pipeline
 
 * Parent Pipeline URL: [SL-exprlib-p](https://google.com)
+* ![SL-exprlib-p_2021_08_13](./SL-exprlib-p_2021_08_13.slp)
 * Child Pipeline URL: [SL-exprlib-c](https://google.com)
 
 ### Triggered Task
