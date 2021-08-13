@@ -117,7 +117,7 @@ ${obj["1"].contents}
 * Child Pipeline URL: [SL-exprlib-c](https://google.com)
 
 ### Triggered Task
-* Cloud URL: [SL-exprlib-task](https://elastic.snaplogic.com:443/api/1/rest/slsched/feed/MAYASORG/projects/expression_library_integration/SL-exprlib-task)
+* Cloud URL: https://elastic.snaplogic.com:443/api/1/rest/slsched/feed/MAYASORG/projects/expression_library_integration/SL-exprlib-task
 
 ### Parent Pipeline
 
