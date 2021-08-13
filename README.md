@@ -65,7 +65,12 @@ Currently, new and modified files merged into the master or base branch in a Git
 
 ### Client Sends Request
 
-* A POST request can be sent to the SnapLogic API using [Postman](https://www.postman.com/)
+* To verify the functionality of the pipeline, a POST request can be sent to the SnapLogic API using [Postman](https://www.postman.com/). 
+
+1. Open a POST Request and enter the SnapLogic task URL
+2. In "Body", make sure your request has the correct [format](#map-format) and is surrounded by []
+
+* When you make a POST request using Postman, a file **will** be created in the SnapLogic Manager under the specified directory. 
 
 ### Mapping
 
@@ -88,13 +93,13 @@ All objects are then grouped in a map with this format:
 }
 ```
 
-This map that contains all of the individual changed files as objects is a groovy object that is later serialized into JSON strings using JsonOutput.toJson(). The json strings are then posted to the SnapLogic server through the [HTTP POST Method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST)
+The map mentioned above starts as a groovy object, and contains all of the individual changed files as nested objects. This map is later serialized into JSON strings using `.JsonOutput.toJson()`. The JSON strings are then posted to the SnapLogic server through the [HTTP POST Method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST). 
 
 #### Accessing Map Contents
 
 ##### Root Keys
 
-Each file has a unique numbered key so that overwrites are not a problem. The numeric keys are root keys and can be considered parents to the nested keys “filename” and “contents”.  Root key values can be accessed through this format:
+Each file is stored under a unique integer to prevent overwriting key value pairs in the map. The numeric keys are root keys and can be considered parents to the nested keys “filename” and “contents”.  Root key values can be accessed through this format:
 
 ```java
 println("Key 1: ${map[1]}")
@@ -111,6 +116,8 @@ ${obj["1"].filename}
 ${obj["1"].contents}
 ```
 
+These nested keys will be accessed in the SnapLogic pipelines through the [JSON Splitter Snap](#json-splitter). This snap will use these nested keys to split each object into its own separate document. 
+
 ## SnapLogic Pipeline
 
 * Parent Pipeline URL: [SL-exprlib-p_2021_08_13](./SL-exprlib-p_2021_08_13.slp)
@@ -118,6 +125,7 @@ ${obj["1"].contents}
 
 ### Triggered Task
 * Cloud URL: https://elastic.snaplogic.com:443/api/1/rest/slsched/feed/MAYASORG/projects/expression_library_integration/SL-exprlib-task
+
 
 ### Parent Pipeline
 
@@ -135,7 +143,7 @@ The first snap in the parent pipeline is a [Data Validator Snap](https://docs-sn
 
 The second snap in the parent pipeline is a [JSON Splitter Snap](https://docs-snaplogic.atlassian.net/wiki/spaces/SD/pages/1438285/JSON+Splitter). This snap splits the objects that are contained within the map posted by Jenkins into separate documents. The Json Path is 
 > jsonPath($, "[*]")
-and this defines the path to the list that holds the document entries. 
+and this defines the path to the list that holds the document entries.
 
 #### Pipeline Execute
 
@@ -181,7 +189,7 @@ The third snap in the child pipeline is a [Fixed Width Formatter Snap](https://d
 
 ![FileWriterSnap](./readmeImages/FileWriterSnap.png)
 
-The final snap in the child pipeline is a [File Writer Snap](https://docs-snaplogic.atlassian.net/wiki/spaces/SD/pages/1438927/File+Writer). This snap writes the formatted binary data that has been passed to it through the pipeline to a file. The name of the file is the name that is carried in the "filename" variable. If a file with this name already exists, it is overwritten with the new contents. 
+The final snap in the child pipeline is a [File Writer Snap](https://docs-snaplogic.atlassian.net/wiki/spaces/SD/pages/1438927/File+Writer). This snap writes the formatted binary data that has been passed to it through the pipeline to a file. The name of the file is the name that is carried in the `filename` variable. If a file with this name already exists, it is overwritten with the new contents. 
 
 #### Error View
 
@@ -191,11 +199,10 @@ When data fails validation against the defined constraints, it is routed to Erro
 
 ![DocumentToBinarySnap](./readmeImages/DocumentToBinarySnap.png)
 
-Unvalidated data is then passed through a [Document To Binary Snap](https://docs-snaplogic.atlassian.net/wiki/spaces/SD/pages/1438976/Document+to+Binary). This snap converts the 'content' value in the input document map to a binary data at the output view. Other entries in the input map are passed to the header document in the output binary data.
+Unvalidated data is then passed through a [Document To Binary Snap](https://docs-snaplogic.atlassian.net/wiki/spaces/SD/pages/1438976/Document+to+Binary). This snap converts the `content` value in the input document map to a binary data at the output view. Other entries in the input map are passed to the header document in the output binary data.
 
 ##### File Writer
 
 ![FileWriterSnap](./readmeImages/FileWriterSnap.png)
 
 The final snap in the error view of the child pipeline is a [File Writer Snap](https://docs-snaplogic.atlassian.net/wiki/spaces/SD/pages/1438927/File+Writer). This snap writes the binary data to a file named **exprlib-c_error.log**. Everytime there is an error, the file is appended. 
-
