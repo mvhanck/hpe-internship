@@ -113,9 +113,8 @@ ${obj["1"].contents}
 
 ## SnapLogic Pipeline
 
-* Parent Pipeline URL: [SL-exprlib-p](https://google.com)
-* ![SL-exprlib-p_2021_08_13](./SL-exprlib-p_2021_08_13.slp)
-* Child Pipeline URL: [SL-exprlib-c](https://google.com)
+* Parent Pipeline URL: [SL-exprlib-p_2021_08_13](./SL-exprlib-p_2021_08_13.slp)
+* Child Pipeline URL: [SL-exprlib-c_2021_08_13](./SL-exprlib-c_2021_08_13.slp)
 
 ### Triggered Task
 * Cloud URL: https://elastic.snaplogic.com:443/api/1/rest/slsched/feed/MAYASORG/projects/expression_library_integration/SL-exprlib-task
